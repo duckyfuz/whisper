@@ -3,57 +3,78 @@
 import { createContext, useContext, useState, ReactNode, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { InformationCircleIcon, CheckCircleIcon, ExclamationTriangleIcon, XCircleIcon } from "@heroicons/react/20/solid";
-import { X } from 'lucide-react'
+import { X } from 'lucide-react';
 
 const MAX_LENGTH = 6;
 
-interface SnackbarMessage {
+const DEFAULT_ICONS: Record<SnackType, ReactNode> = {
+  'success': <CheckCircleIcon className="size-5" />,
+  'warning': <ExclamationTriangleIcon className="size-5" />,
+  'error': <XCircleIcon className="size-5" />,
+  'info': <InformationCircleIcon className="size-5" />,
+  'default': null,
+}
+
+type SnackType = 'success' | 'warning' | 'error' | 'info' | 'default';
+
+interface Snack {
   id: string;
   message: string;
-  type?: 'default'| 'success' | 'error' | 'info' | 'warning';
+  type?: SnackType;
   duration?: number;
-  startAdornment?: ReactNode | null;
+  description?: string;
+  icon?: ReactNode;
+}
+
+interface SnackOptions {
+  duration?: number;
+  description?: string;
+  icon?: ReactNode;
 }
 
 interface SnackbarContextType {
-  addSnackbar: (message: string, type?: SnackbarMessage['type'], duration?: number, startAdornment?: ReactNode | null) => void;
+  snackbar: {
+    (message: string, options?: SnackOptions): void;
+    success: (message: string, options?: SnackOptions) => void;
+    error: (message: string, options?: SnackOptions) => void;
+    info: (message: string, options?: SnackOptions) => void;
+    warning: (message: string, options?: SnackOptions) => void;
+  };
 }
 
 const SnackbarContext = createContext<SnackbarContextType | undefined>(undefined);
 
 export const SnackbarProvider = ({ children }: { children: ReactNode }) => {
-  const [snackbars, setSnackbars] = useState<SnackbarMessage[]>([]);
+  const [snacks, setSnacks] = useState<Snack[]>([]);
 
-  const addSnackbar = useCallback(
-    (message: string, type: SnackbarMessage['type'] = 'default', duration = 5000, startAdornment: ReactNode | null = null) => {
+  const createSnackbar = useCallback(
+    (message: string, type: Snack['type'] = 'default', options: SnackOptions = {}) => {
+      const { duration = 5000, icon = null, description } = options;
       const id = crypto.randomUUID();
 
-      const defaultAdornment =
-        startAdornment !== null
-          ? startAdornment
-          : type === 'success'
-          ? <CheckCircleIcon className="size-5" />
-          : type === 'error'
-          ? <XCircleIcon className="size-5" />
-          : type === 'warning'
-          ? <ExclamationTriangleIcon className="size-5" />
-          : type === 'info'
-          ? <InformationCircleIcon className="size-5" />
-          : null;
-
-      setSnackbars((prev) => [{ id, message, type, duration, startAdornment: defaultAdornment }, ...prev]);
+      setSnacks((prev) => [{ id, message, type, duration, description, icon: icon ?? DEFAULT_ICONS[type] }, ...prev]);
 
       setTimeout(() => {
-        setSnackbars((prev) => prev.filter((snack) => snack.id !== id));
+        setSnacks((prev) => prev.filter((snack) => snack.id !== id));
       }, duration);
     },
     []
   );
 
+  const snackbar = Object.assign(
+    (message: string, options?: SnackOptions) => createSnackbar(message, 'default', options),
+    {
+      success: (message: string, options?: SnackOptions) => createSnackbar(message, 'success', options),
+      warning: (message: string, options?: SnackOptions) => createSnackbar(message, 'warning', options),
+      error: (message: string, options?: SnackOptions) => createSnackbar(message, 'error', options),
+      info: (message: string, options?: SnackOptions) => createSnackbar(message, 'info', options),
+    }
+  );
+
   return (
-    <SnackbarContext.Provider value={{ addSnackbar }}>
+    <SnackbarContext.Provider value={{ snackbar }}>
       {children}
-      <SnackbarContainer snackbars={snackbars} setSnackbars={setSnackbars} />
+      <SnackbarContainer snacks={snacks} setSnacks={setSnacks} />
     </SnackbarContext.Provider>
   );
 };
@@ -67,24 +88,24 @@ export const useSnackbar = (): SnackbarContextType => {
 };
 
 const SnackbarContainer = ({
-  snackbars,
-  setSnackbars,
+  snacks,
+  setSnacks,
 }: {
-  snackbars: SnackbarMessage[];
-  setSnackbars: React.Dispatch<React.SetStateAction<SnackbarMessage[]>>;
+  snacks: Snack[];
+  setSnacks: React.Dispatch<React.SetStateAction<Snack[]>>;
 }) => {
   return (
-    <motion.div layout className="fixed bottom-6 right-6 flex flex-col-reverse space-y-4 space-y-reverse">
+    <motion.div layout className="fixed bottom-6 right-6 flex flex-col-reverse space-y-4 space-y-reverse w-[calc(100vw-3rem)] sm:w-[22.25rem]">
       <AnimatePresence>
-        {snackbars.map(({ id, message, type, startAdornment }, index) => (
+        {snacks.map(({ id, message, description, type, icon }, index) => (
           <motion.div
             key={id}
             layout
             initial={{ opacity: 0, y: 50, scale: 0.98 }}
             animate={{ opacity: index >= MAX_LENGTH - 1 ? 0 : 1, y: 0, scale: 1.0 }}
             exit={{ opacity: 0, y: 50, scale: 1.0 }}
-            transition={{ type: "tween", duration: 0.3, ease: "easeInOut", }}
-            className={`relative text-sm font-medium p-3 rounded-lg shadow-lg ${
+            transition={{ type: "tween", duration: 0.3, ease: "easeInOut" }}
+            className={`relative text-sm font-medium p-3 rounded-lg shadow-lg w-full ${
               type === "success"
                 ? "text-green-700 bg-green-50 border-[#B6F0CA] border"
                 : type === "error"
@@ -95,14 +116,21 @@ const SnackbarContainer = ({
                 ? "text-blue-600 bg-sky-50 border-blue-200 border"
                 : "text-zinc-800 bg-white border-zinc-200 border"
             }`}
-            style={{ zIndex: snackbars.length - index }}
+            style={{ zIndex: snacks.length - index }}
           >
             <div className="flex items-center justify-between gap-3">
-              {startAdornment}
-              <span className={`grow ${type === 'default' ? 'ml-0.5' : ''}`}>{message}</span>
+              {icon && (
+                <span className="shrink-0">
+                  {icon}
+                </span>
+              )}
+              <div className={`flex flex-col gap-0.5 grow ${type === 'default' ? 'ml-0.5' : ''}`}>
+                <span className={`${description ? 'font-[550]' : ''}`}>{message}</span>
+                {description && (<span>{description}</span>)}
+              </div>
               <button
                 onClick={() =>
-                  setSnackbars((prev) => prev.filter((snack) => snack.id !== id))
+                  setSnacks((prev) => prev.filter((snack) => snack.id !== id))
                 }
               >
                 <X className="size-4" />
@@ -114,4 +142,3 @@ const SnackbarContainer = ({
     </motion.div>
   );
 };
-

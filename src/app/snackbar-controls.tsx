@@ -4,18 +4,19 @@ import { useEffect } from "react";
 import { useSnackbar } from "./snackbar-context";
 
 export const SnackbarControls = () => {
-  const { addSnackbar } = useSnackbar();
+  const { snackbar } = useSnackbar();
 
   useEffect(() => {
-    addSnackbar("Wipe your shoes before entering", "error", 50000);
-    addSnackbar("Wipe your shoes before entering", "warning", 50000);
-    addSnackbar("Wipe your shoes before entering", "success", 50000);
-    addSnackbar("Wipe your shoes before entering", "info", 50000);
-    addSnackbar("Wipe your shoes before entering", "default", 50000);
+    snackbar.error("Wipe your shoes before entering", { duration: 50000 });
+    snackbar.warning("Wipe your shoes before entering", { duration: 50000 });
+    snackbar.success("Wipe your shoes before entering", { duration: 50000 });
+    snackbar.info("Wipe your shoes before entering", { duration: 50000 });
+    snackbar.info("Wipe your shoes before entering", { description: 'My persian rug is very expensive. Please be careful.', duration: 50000 });
+    snackbar("Wipe your shoes before entering", { duration: 50000 });
   }, [])
 
   return (
-    <button onClick={() => addSnackbar("Wipe your shoes before entering")}>
+    <button onClick={() => snackbar.info("Wipe your shoes before entering")}>
       Show Snackbar
     </button>
   );
