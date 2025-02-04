@@ -10,7 +10,7 @@ export const SnackbarControls = () => {
     snackbar.error("Wipe your shoes before entering", { duration: 50000 });
     snackbar.warning("Wipe your shoes before entering", { duration: 50000 });
     snackbar.success("Wipe your shoes before entering", { duration: 50000 });
-    snackbar.info("Wipe your shoes before entering", { duration: 50000 });
+    snackbar.info("Wipe your shoes before entering", { duration: 50000, dismissable: false });
     snackbar.info("Wipe your shoes before entering", { description: 'My persian rug is very expensive. Please be careful.', duration: 50000 });
     snackbar("Wipe your shoes before entering", { duration: 50000 });
   }, [])

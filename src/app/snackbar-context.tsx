@@ -24,12 +24,14 @@ interface Snack {
   duration?: number;
   description?: string;
   icon?: ReactNode;
+  dismissable?: boolean;
 }
 
 interface SnackOptions {
   duration?: number;
   description?: string;
   icon?: ReactNode;
+  dismissable?: boolean;
 }
 
 interface SnackbarContextType {
@@ -47,12 +49,12 @@ const SnackbarContext = createContext<SnackbarContextType | undefined>(undefined
 export const SnackbarProvider = ({ children }: { children: ReactNode }) => {
   const [snacks, setSnacks] = useState<Snack[]>([]);
 
-  const createSnackbar = useCallback(
+  const createSnack = useCallback(
     (message: string, type: Snack['type'] = 'default', options: SnackOptions = {}) => {
-      const { duration = 5000, icon = null, description } = options;
+      const { duration = 5000, icon = null, description, dismissable = true } = options;
       const id = crypto.randomUUID();
 
-      setSnacks((prev) => [{ id, message, type, duration, description, icon: icon ?? DEFAULT_ICONS[type] }, ...prev]);
+      setSnacks((prev) => [{ id, message, type, duration, description, icon: icon ?? DEFAULT_ICONS[type], dismissable }, ...prev]);
 
       setTimeout(() => {
         setSnacks((prev) => prev.filter((snack) => snack.id !== id));
@@ -62,12 +64,12 @@ export const SnackbarProvider = ({ children }: { children: ReactNode }) => {
   );
 
   const snackbar = Object.assign(
-    (message: string, options?: SnackOptions) => createSnackbar(message, 'default', options),
+    (message: string, options?: SnackOptions) => createSnack(message, 'default', options),
     {
-      success: (message: string, options?: SnackOptions) => createSnackbar(message, 'success', options),
-      warning: (message: string, options?: SnackOptions) => createSnackbar(message, 'warning', options),
-      error: (message: string, options?: SnackOptions) => createSnackbar(message, 'error', options),
-      info: (message: string, options?: SnackOptions) => createSnackbar(message, 'info', options),
+      success: (message: string, options?: SnackOptions) => createSnack(message, 'success', options),
+      warning: (message: string, options?: SnackOptions) => createSnack(message, 'warning', options),
+      error: (message: string, options?: SnackOptions) => createSnack(message, 'error', options),
+      info: (message: string, options?: SnackOptions) => createSnack(message, 'info', options),
     }
   );
 
@@ -97,7 +99,7 @@ const SnackbarContainer = ({
   return (
     <motion.div layout className="fixed bottom-6 right-6 flex flex-col-reverse space-y-4 space-y-reverse w-[calc(100vw-3rem)] sm:w-[22.25rem]">
       <AnimatePresence>
-        {snacks.map(({ id, message, description, type, icon }, index) => (
+        {snacks.map(({ id, message, description, type, icon, dismissable }, index) => (
           <motion.div
             key={id}
             layout
@@ -128,13 +130,15 @@ const SnackbarContainer = ({
                 <span className={`${description ? 'font-[550]' : ''}`}>{message}</span>
                 {description && (<span>{description}</span>)}
               </div>
-              <button
-                onClick={() =>
-                  setSnacks((prev) => prev.filter((snack) => snack.id !== id))
-                }
-              >
-                <X className="size-4" />
-              </button>
+              {dismissable && (
+                <button
+                  onClick={() =>
+                    setSnacks((prev) => prev.filter((snack) => snack.id !== id))
+                  }
+                >
+                  <X className="size-4" />
+                </button>
+              )}
             </div>
           </motion.div>
         ))}
