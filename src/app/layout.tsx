@@ -25,10 +25,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <SnackbarProvider>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <SnackbarProvider position="bottom-right">
           {children}
         </SnackbarProvider>
       </body>
