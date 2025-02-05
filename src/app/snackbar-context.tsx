@@ -1,28 +1,18 @@
 'use client';
 
-import { createContext, useContext, useState, ReactNode, useCallback } from 'react';
+import { createContext, useContext, useState, ReactNode, useCallback, MouseEventHandler } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { InformationCircleIcon, CheckCircleIcon, ExclamationTriangleIcon, XCircleIcon } from "@heroicons/react/20/solid";
-import { X } from 'lucide-react';
 
 const DEFAULT_MAX_SNACKS = 6;
 const DEFAULT_DURATION = 6000;
 
-const DEFAULT_ICONS: Record<SnackType, ReactNode> = {
-  'success': <CheckCircleIcon className="size-5" />,
-  'warning': <ExclamationTriangleIcon className="size-5" />,
-  'error': <XCircleIcon className="size-5" />,
-  'info': <InformationCircleIcon className="size-5" />,
-  'default': null,
-}
-
 const POSITION_CLASSES: Record<Position, string> = {
-  'bottom-left': 'bottom-6 left-6',
-  'bottom-center': 'bottom-6 inset-x-0 mx-auto',
-  'bottom-right': 'bottom-6 right-6',
-  'top-left': 'top-6 left-6',
-  'top-center': 'top-6 inset-x-0 mx-auto',
-  'top-right': 'top-6 right-6',
+  'bottom-left': 'bottom-8 left-8',
+  'bottom-center': 'bottom-8 inset-x-0 mx-auto',
+  'bottom-right': 'bottom-8 right-8',
+  'top-left': 'top-8 left-8',
+  'top-center': 'top-8 inset-x-0 mx-auto',
+  'top-right': 'top-8 right-8',
 }
 
 type SnackType = 'success' | 'warning' | 'error' | 'info' | 'default';
@@ -36,6 +26,7 @@ interface Snack {
   description?: string;
   icon?: ReactNode;
   dismissable?: boolean;
+  action?: { label: string, onClick: MouseEventHandler<HTMLButtonElement> };
 }
 
 interface SnackOptions {
@@ -43,6 +34,7 @@ interface SnackOptions {
   description?: string;
   icon?: ReactNode;
   dismissable?: boolean;
+  action?: { label: string, onClick: MouseEventHandler<HTMLButtonElement> };
 }
 
 interface SnackbarContextType {
@@ -68,13 +60,13 @@ export const SnackbarProvider = ({ children, maxSnacks = DEFAULT_MAX_SNACKS, pos
 
   const createSnack = useCallback(
     (message: string, type: Snack['type'] = 'default', options: SnackOptions = {}) => {
-      const { duration = DEFAULT_DURATION, icon = null, description, dismissable = true } = options;
+      const { duration = DEFAULT_DURATION, icon = null, description, dismissable = true, action } = options;
       const id = crypto.randomUUID();
 
       const positionIsTop = position.startsWith('top');
 
       setSnacks((prev) => {
-        const newSnack = { id, message, type, duration, description, icon: icon ?? DEFAULT_ICONS[type], dismissable };
+        const newSnack = { id, message, type, duration, description, icon: icon ?? getIcon(type), dismissable, action };
         return positionIsTop ? [...prev, newSnack] : [newSnack, ...prev];
       });
   
@@ -82,7 +74,7 @@ export const SnackbarProvider = ({ children, maxSnacks = DEFAULT_MAX_SNACKS, pos
       setTimeout(() => {
         setSnacks((prev) => prev.filter((snack) => snack.id !== id));
       }, duration);
-    }, []);
+    }, [position]);
 
   const snackbar = Object.assign(
     (message: string, options?: SnackOptions) => createSnack(message, 'default', options),
@@ -132,28 +124,29 @@ const SnackbarContainer = ({
     }
   }
 
+  const handleDismiss = useCallback((id: string) => {
+    setSnacks((prevSnacks) => prevSnacks.filter((snack) => snack.id !== id));
+  }, [setSnacks]);
+
+  const handleAction = (id: string, onClick: MouseEventHandler<HTMLButtonElement>) => {
+    return (event: React.MouseEvent<HTMLButtonElement>) => {
+      if (onClick) { onClick(event); }
+      handleDismiss(id);
+    };
+  };
+
   return (
     <motion.div layout className={`fixed flex flex-col-reverse space-y-4 space-y-reverse w-[calc(100vw-3rem)] sm:w-[22.25rem] ${POSITION_CLASSES[position]}`}>
       <AnimatePresence>
-        {snacks.map(({ id, message, description, type, icon, dismissable }, index) => (
+        {snacks.map(({ id, message, description, type, icon, dismissable, action }, index) => (
           <motion.div
             key={id}
             layout
             initial={{ opacity: 0, y, scale: 0.98 }}
-            animate={{ opacity: getOpacity(index), y: 0, scale: 1.0, display: getOpacity(index) ? 'block' : 'none' }}
+            animate={{ opacity: getOpacity(index), y: 0, scale: 1.0 }}
             exit={{ opacity: 0, y, scale: 1.0 }}
             transition={{ type: "tween", duration: 0.3, ease: "easeInOut" }}
-            className={`relative text-sm font-medium p-3 rounded-lg shadow-lg w-full ${
-              type === "success"
-                ? "text-green-700 bg-green-50 border-[#B6F0CA] border"
-                : type === "error"
-                ? "text-[#cb2321] bg-red-50 border-red-200 border"
-                : type === "warning"
-                ? "text-amber-700 bg-yellow-50 border-amber-200 border"
-                : type === "info"
-                ? "text-blue-600 bg-sky-50 border-blue-200 border"
-                : "text-zinc-800 bg-white border-zinc-200 border"
-            }`}
+            className={`relative text-sm font-medium p-3 rounded-lg shadow-lg w-full ${getSnackClasses(type)}`}
             style={{ zIndex: snacks.length - index }}
           >
             <div className="flex items-center justify-between gap-3">
@@ -166,9 +159,14 @@ const SnackbarContainer = ({
                 <span className={`${description ? 'font-[550]' : ''}`}>{message}</span>
                 {description && (<span>{description}</span>)}
               </div>
+              {action && (
+                <button className="px-2 py-1 rounded bg-zinc-800 text-white" onClick={handleAction(id, action.onClick)}>
+                  {action.label}
+                </button>
+              )}
               {dismissable && (
-                <button onClick={() => setSnacks((prev) => prev.filter((snack) => snack.id !== id))}>
-                  <X className="size-4" />
+                <button onClick={() => handleDismiss(id)}>
+                  <XIcon className="size-4" />
                 </button>
               )}
             </div>
@@ -178,3 +176,64 @@ const SnackbarContainer = ({
     </motion.div>
   );
 };
+
+const getSnackClasses = (type?: SnackType) => {
+  switch (type) {
+    case "success":
+      return "text-green-700 bg-green-50 border-[#B6F0CA] border"
+    case "warning":
+      return "text-amber-700 bg-yellow-50 border-amber-200 border"
+    case "error":
+      return "text-[#cb2321] bg-red-50 border-red-200 border"
+    case "info":
+      return "text-blue-600 bg-sky-50 border-blue-200 border"
+    default:
+      return "text-zinc-800 bg-white border-zinc-200 border"
+  }
+}
+
+const getIcon = (type?: SnackType) => {
+  switch (type) {
+    case "success":
+      return <SuccessIcon />
+    case "warning":
+      return <WarningIcon />
+    case "error":
+      return <ErrorIcon />
+    case "info":
+      return <InfoIcon />
+    default:
+      return null
+  }
+};
+
+const InfoIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="size-5">
+    <path fillRule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-7-4a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM9 9a.75.75 0 0 0 0 1.5h.253a.25.25 0 0 1 .244.304l-.459 2.066A1.75 1.75 0 0 0 10.747 15H11a.75.75 0 0 0 0-1.5h-.253a.25.25 0 0 1-.244-.304l.459-2.066A1.75 1.75 0 0 0 9.253 9H9Z" clipRule="evenodd" />
+  </svg>
+);
+
+const SuccessIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="size-5">
+    <path fillRule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z" clipRule="evenodd" />
+  </svg>
+);
+
+const WarningIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="size-5">
+    <path fillRule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495ZM10 5a.75.75 0 0 1 .75.75v3.5a.75.75 0 0 1-1.5 0v-3.5A.75.75 0 0 1 10 5Zm0 9a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clipRule="evenodd" />
+  </svg>
+);
+
+const ErrorIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="size-5">
+    <path fillRule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16ZM8.28 7.22a.75.75 0 0 0-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 1 0 1.06 1.06L10 11.06l1.72 1.72a.75.75 0 1 0 1.06-1.06L11.06 10l1.72-1.72a.75.75 0 0 0-1.06-1.06L10 8.94 8.28 7.22Z" clipRule="evenodd" />
+  </svg>
+);
+
+const XIcon = ({ className }: { className?: string }) => (
+  <svg className={className} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M18 6 6 18"/>
+    <path d="m6 6 12 12"/>
+  </svg>
+);
