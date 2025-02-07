@@ -15,8 +15,8 @@ const POSITION_CLASSES: Record<Position, string> = {
   'top-right': 'top-8 right-8',
 }
 
-type SnackType = 'success' | 'warning' | 'error' | 'info' | 'default';
-type Position = 'bottom-left' | 'bottom-center' | 'bottom-right' | 'top-left' | 'top-center' | 'top-right';
+export type SnackType = 'success' | 'warning' | 'error' | 'info' | 'default';
+export type Position = 'bottom-left' | 'bottom-center' | 'bottom-right' | 'top-left' | 'top-center' | 'top-right';
 
 interface Snack {
   id: string;
@@ -40,10 +40,11 @@ interface SnackOptions {
 interface SnackbarContextType {
   snackbar: {
     (message: string, options?: SnackOptions): void;
-    success: (message: string, options?: SnackOptions) => void;
-    error: (message: string, options?: SnackOptions) => void;
     info: (message: string, options?: SnackOptions) => void;
+    success: (message: string, options?: SnackOptions) => void;
     warning: (message: string, options?: SnackOptions) => void;
+    error: (message: string, options?: SnackOptions) => void;
+    clear: () => void;
   };
 }
 
@@ -60,7 +61,7 @@ export const SnackbarProvider = ({ children, maxSnacks = DEFAULT_MAX_SNACKS, pos
 
   const createSnack = useCallback(
     (message: string, type: Snack['type'] = 'default', options: SnackOptions = {}) => {
-      const { duration = DEFAULT_DURATION, icon = null, description, dismissable = true, action } = options;
+      const { duration = DEFAULT_DURATION, icon = null, description, dismissable = false, action } = options;
       const id = crypto.randomUUID();
 
       const positionIsTop = position.startsWith('top');
@@ -79,17 +80,18 @@ export const SnackbarProvider = ({ children, maxSnacks = DEFAULT_MAX_SNACKS, pos
   const snackbar = Object.assign(
     (message: string, options?: SnackOptions) => createSnack(message, 'default', options),
     {
+      info: (message: string, options?: SnackOptions) => createSnack(message, 'info', options),
       success: (message: string, options?: SnackOptions) => createSnack(message, 'success', options),
       warning: (message: string, options?: SnackOptions) => createSnack(message, 'warning', options),
       error: (message: string, options?: SnackOptions) => createSnack(message, 'error', options),
-      info: (message: string, options?: SnackOptions) => createSnack(message, 'info', options),
+      clear: () => setSnacks([]),
     }
   );
 
   return (
     <SnackbarContext.Provider value={{ snackbar }}>
       {children}
-      <SnackbarContainer snacks={snacks} setSnacks={setSnacks} position={position} maxSnacks={maxSnacks} />
+      <SnackbarContainer key={position} snacks={snacks} setSnacks={setSnacks} position={position} maxSnacks={maxSnacks} />
     </SnackbarContext.Provider>
   );
 };
@@ -120,7 +122,7 @@ const SnackbarContainer = ({
     if (positionIsTop) {
       return snacks.length - index > maxSnacks ? 0 : 1;
     } else {
-      return index >= maxSnacks - 1 ? 0 : 1;
+      return index >= maxSnacks ? 0 : 1;
     }
   }
 
