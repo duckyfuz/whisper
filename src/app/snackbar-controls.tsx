@@ -45,7 +45,7 @@ export const SnackbarControls = ({ onPositionChange }: { onPositionChange: (_pos
       <div className="flex flex-col gap-4">
         <h2 className="font-semibold">Usage</h2>
         <p>
-          Download the single file of code from the <Link className="text-blue-600 hover:underline" href="#">github repository</Link>, add it to your project, and wrap your app with the context provider.
+          Download the single file of code from the <Link className="text-blue-600 hover:underline" href="https://github.com/farzany/whisper/blob/main/src/app/snackbar-context.tsx" target="_blank">github repository</Link>, add it to your project, and wrap your app with the context provider.
         </p>
         <pre>
           <code className="block rounded-md bg-zinc-100 px-3 py-2.5 text-sm">

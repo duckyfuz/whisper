@@ -6,6 +6,9 @@ import React, { createContext, useContext, useState, ReactNode, useCallback, Mou
 const DEFAULT_MAX_SNACKS = 6;
 const DEFAULT_DURATION = 6000;
 
+export type SnackType = 'success' | 'warning' | 'error' | 'info' | 'default';
+export type Position = 'bottom-left' | 'bottom-center' | 'bottom-right' | 'top-left' | 'top-center' | 'top-right';
+
 const POSITION_CLASSES: Record<Position, string> = {
   'bottom-left': 'bottom-8 left-8',
   'bottom-center': 'bottom-8 inset-x-0 mx-auto',
@@ -14,9 +17,6 @@ const POSITION_CLASSES: Record<Position, string> = {
   'top-center': 'top-8 inset-x-0 mx-auto',
   'top-right': 'top-8 right-8',
 };
-
-export type SnackType = 'success' | 'warning' | 'error' | 'info' | 'default';
-export type Position = 'bottom-left' | 'bottom-center' | 'bottom-right' | 'top-left' | 'top-center' | 'top-right';
 
 interface Snack {
   id: string;
