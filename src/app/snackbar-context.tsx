@@ -1,7 +1,7 @@
 'use client';
 
-import { createContext, useContext, useState, ReactNode, useCallback, MouseEventHandler } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import React, { createContext, useContext, useState, ReactNode, useCallback, MouseEventHandler } from 'react';
 
 const DEFAULT_MAX_SNACKS = 6;
 const DEFAULT_DURATION = 6000;
@@ -13,7 +13,7 @@ const POSITION_CLASSES: Record<Position, string> = {
   'top-left': 'top-8 left-8',
   'top-center': 'top-8 inset-x-0 mx-auto',
   'top-right': 'top-8 right-8',
-}
+};
 
 export type SnackType = 'success' | 'warning' | 'error' | 'info' | 'default';
 export type Position = 'bottom-left' | 'bottom-center' | 'bottom-right' | 'top-left' | 'top-center' | 'top-right';
@@ -39,11 +39,11 @@ interface SnackOptions {
 
 interface SnackbarContextType {
   snackbar: {
-    (message: string, options?: SnackOptions): void;
-    info: (message: string, options?: SnackOptions) => void;
-    success: (message: string, options?: SnackOptions) => void;
-    warning: (message: string, options?: SnackOptions) => void;
-    error: (message: string, options?: SnackOptions) => void;
+    (_message: string, _options?: SnackOptions): void;
+    info: (_message: string, _options?: SnackOptions) => void;
+    success: (_message: string, _options?: SnackOptions) => void;
+    warning: (_message: string, _options?: SnackOptions) => void;
+    error: (_message: string, _options?: SnackOptions) => void;
     clear: () => void;
   };
 }
@@ -70,8 +70,8 @@ export const SnackbarProvider = ({ children, maxSnacks = DEFAULT_MAX_SNACKS, pos
         const newSnack = { id, message, type, duration, description, icon: icon ?? getIcon(type), dismissable, action };
         return positionIsTop ? [...prev, newSnack] : [newSnack, ...prev];
       });
-  
-      
+
+
       setTimeout(() => {
         setSnacks((prev) => prev.filter((snack) => snack.id !== id));
       }, duration);
@@ -85,7 +85,7 @@ export const SnackbarProvider = ({ children, maxSnacks = DEFAULT_MAX_SNACKS, pos
       warning: (message: string, options?: SnackOptions) => createSnack(message, 'warning', options),
       error: (message: string, options?: SnackOptions) => createSnack(message, 'error', options),
       clear: () => setSnacks([]),
-    }
+    },
   );
 
   return (
@@ -124,21 +124,19 @@ const SnackbarContainer = ({
     } else {
       return index >= maxSnacks ? 0 : 1;
     }
-  }
+  };
 
   const handleDismiss = useCallback((id: string) => {
     setSnacks((prevSnacks) => prevSnacks.filter((snack) => snack.id !== id));
   }, [setSnacks]);
 
-  const handleAction = (id: string, onClick: MouseEventHandler<HTMLButtonElement>) => {
-    return (event: React.MouseEvent<HTMLButtonElement>) => {
-      if (onClick) { onClick(event); }
-      handleDismiss(id);
-    };
+  const handleAction = (id: string, onClick: MouseEventHandler<HTMLButtonElement>) => (event: React.MouseEvent<HTMLButtonElement>) => {
+    if (onClick) { onClick(event); }
+    handleDismiss(id);
   };
 
   return (
-    <motion.div layout className={`fixed flex flex-col-reverse space-y-4 space-y-reverse w-[calc(100vw-3rem)] sm:w-[22.25rem] ${POSITION_CLASSES[position]}`}>
+    <motion.div layout className={`fixed flex w-[calc(100vw-3rem)] flex-col-reverse space-y-4 space-y-reverse sm:w-[22.25rem] ${POSITION_CLASSES[position]}`}>
       <AnimatePresence>
         {snacks.map(({ id, message, description, type, icon, dismissable, action }, index) => (
           <motion.div
@@ -147,8 +145,8 @@ const SnackbarContainer = ({
             initial={{ opacity: 0, y, scale: 0.98 }}
             animate={{ opacity: getOpacity(index), y: 0, scale: 1.0 }}
             exit={{ opacity: 0, y, scale: 1.0 }}
-            transition={{ type: "tween", duration: 0.3, ease: "easeInOut" }}
-            className={`relative text-sm font-medium p-3 rounded-lg shadow-lg w-full ${getSnackClasses(type)}`}
+            transition={{ type: 'tween', duration: 0.3, ease: 'easeInOut' }}
+            className={`relative w-full rounded-lg p-3 text-sm font-medium shadow-lg ${getSnackClasses(type)}`}
             style={{ zIndex: snacks.length - index }}
           >
             <div className="flex items-center justify-between gap-3">
@@ -157,12 +155,12 @@ const SnackbarContainer = ({
                   {icon}
                 </span>
               )}
-              <div className={`flex flex-col gap-0.5 grow ${type === 'default' ? 'ml-0.5' : ''}`}>
+              <div className={`flex grow flex-col gap-0.5 ${type === 'default' ? 'ml-0.5' : ''}`}>
                 <span className={`${description ? 'font-[550]' : ''}`}>{message}</span>
                 {description && (<span>{description}</span>)}
               </div>
               {action && (
-                <button className="px-2 py-1 rounded bg-zinc-800 text-white" onClick={handleAction(id, action.onClick)}>
+                <button className="rounded bg-zinc-800 px-2 py-1 text-white" onClick={handleAction(id, action.onClick)}>
                   {action.label}
                 </button>
               )}
@@ -181,31 +179,31 @@ const SnackbarContainer = ({
 
 const getSnackClasses = (type?: SnackType) => {
   switch (type) {
-    case "success":
-      return "text-green-700 bg-green-50 border-[#B6F0CA] border"
-    case "warning":
-      return "text-amber-700 bg-yellow-50 border-amber-200 border"
-    case "error":
-      return "text-[#cb2321] bg-red-50 border-red-200 border"
-    case "info":
-      return "text-blue-600 bg-sky-50 border-blue-200 border"
-    default:
-      return "text-zinc-800 bg-white border-zinc-200 border"
+  case 'success':
+    return 'text-green-700 bg-green-50 border-[#B6F0CA] border';
+  case 'warning':
+    return 'text-amber-700 bg-yellow-50 border-amber-200 border';
+  case 'error':
+    return 'text-[#cb2321] bg-red-50 border-red-200 border';
+  case 'info':
+    return 'text-blue-600 bg-sky-50 border-blue-200 border';
+  default:
+    return 'text-zinc-800 bg-white border-zinc-200 border';
   }
-}
+};
 
 const getIcon = (type?: SnackType) => {
   switch (type) {
-    case "success":
-      return <SuccessIcon />
-    case "warning":
-      return <WarningIcon />
-    case "error":
-      return <ErrorIcon />
-    case "info":
-      return <InfoIcon />
-    default:
-      return null
+  case 'success':
+    return <SuccessIcon />;
+  case 'warning':
+    return <WarningIcon />;
+  case 'error':
+    return <ErrorIcon />;
+  case 'info':
+    return <InfoIcon />;
+  default:
+    return null;
   }
 };
 
