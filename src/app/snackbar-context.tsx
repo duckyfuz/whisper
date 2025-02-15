@@ -1,4 +1,12 @@
-'use client';
+'use client'; // Only required in Next.js projects
+
+/**
+ * Whisper
+ *
+ * A lightweight and customizable React Snackbar (toast) system built with framer-motion and tailwindcss.
+ *
+ * Github: https://github.com/farzany/whisper
+ */
 
 import { motion, AnimatePresence } from 'framer-motion';
 import React, { createContext, useContext, useState, ReactNode, useCallback, MouseEventHandler } from 'react';
