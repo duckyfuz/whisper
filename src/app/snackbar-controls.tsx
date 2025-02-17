@@ -18,6 +18,7 @@ export const SnackbarControls = ({ onPositionChange }: { onPositionChange: (_pos
   ];
 
   const options = [
+    { label: 'icon', code: `snackbar("You await your fate in an interrogation room", {\n\ticon: <ClockIcon />,\n});`, onClick: () => snackbar('You await your fate in an interrogation room', { icon: <ClockIcon /> }) },
     { label: 'description', code: `snackbar.info("Your lawyer has arrived", {\n\tdescription: "Saul Goodman will be representing you",\n});`, onClick: () => snackbar.info('Your lawyer has arrived', { description: 'Saul Goodman will be representing you' }) },
     { label: 'action', code: `snackbar("You have pleaded guilty", {\n\taction: { label: 'Undo', onClick: () => {} },\n});`, onClick: () => snackbar('You have pleaded guilty', { action: { label: 'Undo', onClick: () => {} }})},
     { label: 'dismissable', code: `snackbar.warning("You were sentenced to 10 years in prison", {\n\tdismissable: true,\n});`, onClick: () => snackbar.warning('You were sentenced to 10 years in prison', { dismissable: true }) },
@@ -99,3 +100,9 @@ export const SnackbarControls = ({ onPositionChange }: { onPositionChange: (_pos
     </div>
   );
 };
+
+const ClockIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="size-5">
+    <path fillRule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm.75-13a.75.75 0 0 0-1.5 0v5c0 .414.336.75.75.75h4a.75.75 0 0 0 0-1.5h-3.25V5Z" clipRule="evenodd" />
+  </svg>
+);
