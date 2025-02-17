@@ -53,6 +53,11 @@ export const SnackbarControls = ({ onPositionChange }: { onPositionChange: (_pos
             {`<SnackbarProvider>\n...\n</SnackbarProvider>`}
           </code>
         </pre>
+        <pre>
+          <code className="block rounded-md bg-zinc-100 px-3 py-2.5 text-sm">
+            {`const { snackbar } = useSnackbar();`}
+          </code>
+        </pre>
         <p>
           You will also need to install the package dependencies.
         </p>
