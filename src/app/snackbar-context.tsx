@@ -152,10 +152,9 @@ const SnackbarContainer = ({
             layout
             initial={{ opacity: 0, y, scale: 0.98 }}
             animate={{ opacity: getOpacity(index), y: 0, scale: 1.0 }}
-            exit={{ opacity: 0, y, scale: 1.0 }}
+            exit={{ opacity: 0, y, scale: 1.0, zIndex: -1 }}
             transition={{ type: 'tween', duration: 0.3, ease: 'easeInOut' }}
             className={`relative w-full rounded-lg p-3 text-sm font-medium shadow-lg ${getSnackClasses(type)}`}
-            style={{ zIndex: snacks.length - index }}
           >
             <div className="flex items-center justify-between gap-3">
               {icon && (
