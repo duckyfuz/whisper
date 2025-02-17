@@ -66,7 +66,7 @@ export const SnackbarControls = ({ onPositionChange }: { onPositionChange: (_pos
         <h2 className="font-semibold">Types</h2>
         <div className="flex flex-wrap gap-3 text-sm">
           {types.map((type) => (
-            <button className="whitespace-nowrap rounded-md border border-zinc-300 px-3 py-1.5" key={type.label} onClick={() => { setSelectedType(type); type.onClick(); }}>{type.label}</button>
+            <button className="whitespace-nowrap rounded-md border border-zinc-300 px-3 py-1.5 hover:bg-zinc-50 active:bg-zinc-100" key={type.label} onClick={() => { setSelectedType(type); type.onClick(); }}>{type.label}</button>
           ))}
         </div>
         <code className="block rounded-md bg-zinc-100 px-3 py-2.5 text-sm">
@@ -77,7 +77,7 @@ export const SnackbarControls = ({ onPositionChange }: { onPositionChange: (_pos
         <h2 className="font-semibold">Options</h2>
         <div className="flex flex-wrap gap-3 text-sm">
           {options.map((option) => (
-            <button className="whitespace-nowrap rounded-md border border-zinc-300 px-3 py-1.5" key={option.label} onClick={() => { setSelectedOption(option); option.onClick(); }}>{option.label}</button>
+            <button className="whitespace-nowrap rounded-md border border-zinc-300 px-3 py-1.5 hover:bg-zinc-50 active:bg-zinc-100" key={option.label} onClick={() => { setSelectedOption(option); option.onClick(); }}>{option.label}</button>
           ))}
         </div>
         <pre className="overflow-x-auto whitespace-pre-wrap">
@@ -90,7 +90,7 @@ export const SnackbarControls = ({ onPositionChange }: { onPositionChange: (_pos
         <h2 className="font-semibold">Positions</h2>
         <div className="flex flex-wrap gap-3 text-sm">
           {positions.map((position) => (
-            <button className="whitespace-nowrap rounded-md border border-zinc-300 px-3 py-1.5" key={position} onClick={() => handlePositionChange(position)}>{position}</button>
+            <button className="whitespace-nowrap rounded-md border border-zinc-300 px-3 py-1.5 hover:bg-zinc-50 active:bg-zinc-100" key={position} onClick={() => handlePositionChange(position)}>{position}</button>
           ))}
         </div>
         <code className="block rounded-md bg-zinc-100 px-3 py-2.5 text-sm">
