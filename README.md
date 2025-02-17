@@ -37,6 +37,10 @@ There is no npm package, it's just 1 file you can fully customize. Download the 
 </SnackbarProvider>
 ```
 
+```
+const { snackbar } = useSnackbar();
+```
+
 You will also need to install the package dependencies.
 
 ```
