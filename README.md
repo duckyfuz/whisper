@@ -5,6 +5,8 @@ A lightweight and fully customizable React snackbar (toast) system built with **
 
 > Inspired by Sonner by Emil Kowalski
 
+### [Demo Playground](https://whisper-snackbar.vercel.app)
+
 ## ✨ Features
 
 - **Instant API:** Simple and intuitive API - see below.
@@ -44,7 +46,7 @@ npm install tailwindcss
 
 ## ⚙️ Usage
 
-**Recommended:** To explore all of the available snack types and options (along with their respective code snippets), please check out the demo playground.
+**Recommended:** To explore all of the available snack types and options (along with their respective code snippets), please check out the [demo playground](https://whisper-snackbar.vercel.app).
 
 <ins>All API functions accept two parameters:</ins>
 
