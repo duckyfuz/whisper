@@ -79,7 +79,6 @@ export const SnackbarProvider = ({ children, maxSnacks = DEFAULT_MAX_SNACKS, pos
         return positionIsTop ? [...prev, newSnack] : [newSnack, ...prev];
       });
 
-
       setTimeout(() => {
         setSnacks((prev) => prev.filter((snack) => snack.id !== id));
       }, duration);
