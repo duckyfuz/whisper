@@ -16,10 +16,10 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: 'Whisper',
-  description: 'A lightweight and fully customizable React snackbar (toast) system built with Framer Motion and TailwindCSS.',
+  description: 'A lightweight and fully customizable React snackbar (toast) component built with Framer Motion and TailwindCSS.',
   openGraph: {
-    title: 'Whisper | A React Snackbar (Toast) System',
-    description: 'A lightweight and fully customizable React snackbar (toast) system built with Framer Motion and TailwindCSS.',
+    title: 'Whisper | A React Snackbar (Toast) Component',
+    description: 'A lightweight and fully customizable React snackbar (toast) component built with Framer Motion and TailwindCSS.',
     url: 'https://whisper-snackbar.vercel.app',
     siteName: 'Nobility Pay',
     images: [

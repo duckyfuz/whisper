@@ -3,7 +3,7 @@
 /**
  * Whisper
  *
- * A lightweight and customizable React Snackbar (toast) system built with framer-motion and tailwindcss.
+ * A lightweight and customizable React Snackbar (toast) component built with framer-motion and tailwindcss.
  *
  * Github: https://github.com/farzany/whisper
  */

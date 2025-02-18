@@ -10,14 +10,15 @@ export default function Home() {
 
   return (
     <SnackbarProvider position={position}>
-      <div className="grid min-h-screen grid-rows-[20px_1fr_20px] place-items-center gap-16 bg-white p-8 pb-20 font-[family-name:var(--font-geist-sans)] text-zinc-800 sm:p-20">
-        <header className="row-start-1 flex flex-wrap items-center justify-center gap-6">
+      <div className="flex min-h-screen flex-col place-items-center gap-16 bg-white p-8 pb-20 font-[family-name:var(--font-geist-sans)] text-zinc-800 sm:p-20">
+        <header className="flex flex-col flex-wrap items-center justify-center gap-2">
           <h1 className="text-3xl font-semibold">Whisper</h1>
+          <p className="text-lg font-medium text-zinc-700">React Snackbar Component</p>
         </header>
-        <main className="relative row-start-2 flex max-w-2xl flex-col items-center gap-8 sm:items-start">
+        <main className="relative flex max-w-2xl flex-col items-center gap-8 sm:items-start">
           <SnackbarControls onPositionChange={(position) => setPosition(position)} />
         </main>
-        <footer className="row-start-3 flex flex-wrap items-center justify-center gap-6">
+        <footer className="flex flex-col flex-wrap items-center justify-center gap-2">
           <Link className="flex items-center gap-1" href="https://www.youtube.com/@farzany" target="_blank">
             <span>made with</span>
             <svg className="size-5 text-red-500" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
@@ -25,6 +26,7 @@ export default function Home() {
             </svg>
             <span>by farzan</span>
           </Link>
+          <p className="text-zinc-500">Inspired by Sonner by Emil Kowalski</p>
         </footer>
       </div>
     </SnackbarProvider>

@@ -1,7 +1,7 @@
 
-# Whisper - React Snackbar System
+# Whisper - React Snackbar Component
 
-A lightweight and fully customizable React snackbar (toast) system built with **Framer Motion** and **TailwindCSS**.
+A lightweight and fully customizable React snackbar (toast) component built with **Framer Motion** and **TailwindCSS**.
 
 > Inspired by Sonner by Emil Kowalski
 
@@ -13,7 +13,7 @@ A lightweight and fully customizable React snackbar (toast) system built with **
 
 - **Instant API:** Simple and intuitive API - see below.
 
-- **Customizable:** Easy-to-read code and fully styled with TailwindCSS, allowing you to extend and modify the system as you need.
+- **Customizable:** Easy-to-read code and fully styled with TailwindCSS, allowing you to extend and modify the component as you need.
 
 - **Multiple Notification Types:** Supports `success`, `warning`, `error`, `info`, and `default` types.
 
