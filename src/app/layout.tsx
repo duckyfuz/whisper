@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   title: 'Whisper',
   description: 'A lightweight and fully customizable React snackbar (toast) system built with Framer Motion and TailwindCSS.',
   openGraph: {
-    title: 'A React Snackbar (Toast) System',
+    title: 'Whisper | A React Snackbar (Toast) System',
     description: 'A lightweight and fully customizable React snackbar (toast) system built with Framer Motion and TailwindCSS.',
     url: 'https://whisper-snackbar.vercel.app',
     siteName: 'Nobility Pay',
