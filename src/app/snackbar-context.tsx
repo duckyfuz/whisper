@@ -13,6 +13,7 @@ import React, { createContext, useContext, useState, ReactNode, useCallback, Mou
 
 const DEFAULT_MAX_SNACKS = 6;
 const DEFAULT_DURATION = 6000;
+const BASE_Z_INDEX = 1000;
 
 export type SnackType = 'success' | 'warning' | 'error' | 'info' | 'default';
 export type Position = 'bottom-left' | 'bottom-center' | 'bottom-right' | 'top-left' | 'top-center' | 'top-right';
@@ -149,9 +150,9 @@ const SnackbarContainer = ({
           <motion.div
             key={id}
             layout
-            initial={{ opacity: 0, y, scale: 0.98 }}
-            animate={{ opacity: getOpacity(index), y: 0, scale: 1.0 }}
-            exit={{ opacity: 0, y, scale: 1.0, zIndex: -1 }}
+            initial={{ opacity: 0, y, scale: 0.98, zIndex: BASE_Z_INDEX }}
+            animate={{ opacity: getOpacity(index), y: 0, scale: 1.0, zIndex: BASE_Z_INDEX }}
+            exit={{ opacity: 0, y, scale: 1.0, zIndex: BASE_Z_INDEX - index }}
             transition={{ type: 'tween', duration: 0.3, ease: 'easeInOut' }}
             className={`relative w-full rounded-lg p-3 text-sm font-medium shadow-lg ${getSnackClasses(type)}`}
           >
