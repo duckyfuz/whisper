@@ -5,7 +5,9 @@ A lightweight and fully customizable React snackbar (toast) system built with **
 
 > Inspired by Sonner by Emil Kowalski
 
-### [Demo Playground](https://whisper-snackbar.vercel.app)
+## [Demo Playground](https://whisper-snackbar.vercel.app)
+
+![Demo](https://github.com/farzany/whisper/blob/main/public/demo.gif)
 
 ## ✨ Features
 
