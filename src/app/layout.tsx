@@ -23,16 +23,10 @@ export const metadata: Metadata = {
     siteName: 'Nobility Pay',
     images: [
       {
-        url: 'https://whisper-snackbar.vercel.app/og.gif',
-        width: 1203,
-        height: 630,
-        alt: 'Various snacks of different types being rendered',
-      },
-      {
         url: 'https://whisper-snackbar.vercel.app/og.jpg',
         width: 1203,
         height: 630,
-        alt: 'Various snacks of different types being rendered',
+        alt: 'A queue of various snacks of different types',
       },
     ],
     locale: 'en',
