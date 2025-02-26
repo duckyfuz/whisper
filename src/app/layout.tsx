@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     title: 'Whisper | A React Snackbar (Toast) Component',
     description: 'A lightweight and fully customizable React snackbar (toast) component built with Framer Motion and TailwindCSS.',
     url: 'https://whisper-snackbar.vercel.app',
-    siteName: 'Nobility Pay',
+    siteName: 'Whisper',
     images: [
       {
         url: 'https://whisper-snackbar.vercel.app/og.jpg',
