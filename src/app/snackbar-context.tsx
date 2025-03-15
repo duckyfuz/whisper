@@ -19,12 +19,12 @@ export type SnackType = 'success' | 'warning' | 'error' | 'info' | 'default';
 export type Position = 'bottom-left' | 'bottom-center' | 'bottom-right' | 'top-left' | 'top-center' | 'top-right';
 
 const POSITION_CLASSES: Record<Position, string> = {
-  'bottom-left': 'bottom-8 left-8',
-  'bottom-center': 'bottom-8 inset-x-0 mx-auto',
-  'bottom-right': 'bottom-8 right-8',
-  'top-left': 'top-8 left-8',
-  'top-center': 'top-8 inset-x-0 mx-auto',
-  'top-right': 'top-8 right-8',
+  'bottom-left': 'bottom-8 sm:left-8 sm:inset-x-auto',
+  'bottom-center': 'bottom-8',
+  'bottom-right': 'bottom-8 sm:right-8 sm:inset-x-auto',
+  'top-left': 'top-8 sm:left-8 sm:inset-x-auto',
+  'top-center': 'top-8',
+  'top-right': 'top-8 sm:right-8 sm:inset-x-auto',
 };
 
 interface Snack {
@@ -144,7 +144,7 @@ const SnackbarContainer = ({
   };
 
   return (
-    <motion.div layout className={`fixed flex w-[calc(100vw-3rem)] flex-col-reverse space-y-4 space-y-reverse sm:w-[22.25rem] ${POSITION_CLASSES[position]}`}>
+    <motion.div layout className={`fixed inset-x-0 mx-auto flex w-[calc(100vw-3rem)] flex-col-reverse space-y-4 space-y-reverse sm:w-[22.25rem] ${POSITION_CLASSES[position]}`}>
       <AnimatePresence>
         {snacks.map(({ id, message, description, type, icon, dismissable, action }, index) => (
           <motion.div
