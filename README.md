@@ -29,6 +29,8 @@ A lightweight and fully customizable React snackbar (toast) component built with
 
 - **Stackable Alerts:** Maintain a queue of snacks with a configurable max count (default: 6), and clear them all with a provided function.
 
+- **WCAG Accessibility:** The default type styles adhere to WCAG AA guidelines.
+
 ## 💻 Installation
 
 There is no npm package, it's just 1 file you can fully customize. Download the single file of code (`src/app/snackbar-context.tsx`), add it to your project, and wrap your app with the context provider.
