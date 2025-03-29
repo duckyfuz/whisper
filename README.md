@@ -9,13 +9,15 @@ A lightweight and fully customizable React snackbar (toast) component built with
 
 ![Demo](https://github.com/farzany/whisper/blob/main/public/demo.gif)
 
+![Promise](https://github.com/user-attachments/assets/272f93c5-c868-4a3e-86dd-474c11dff070)
+
 ## ✨ Features
 
 - **Instant API:** Simple and intuitive API - see below.
 
 - **Customizable:** Easy-to-read code and fully styled with TailwindCSS, allowing you to extend and modify the component as you need.
 
-- **Multiple Notification Types:** Supports `success`, `warning`, `error`, `info`, and `default` types.
+- **Multiple Notification Types:** Supports `default`, `info`, `success`, `warning`, `error`, and `promise` types.
 
 - **Flexible Positioning:** Display snacks in six different positions.
 
@@ -70,6 +72,17 @@ snackbar.success("You successfully snuck past security");
 snackbar.warning("You have 5m before the alarm is triggered");
 snackbar.error("Mission failed, you were spotted");
 snackbar.clear();
+
+const promise = () => new Promise((resolve) => setTimeout(() => resolve({ name: 'Whisper' }), 3000));
+
+snackbar.promise(promise(), {
+  loading: { message: 'On route to the police station...' },
+  success: {
+    message: 'You have arrived at the police station',
+    options: { icon: <ShieldIcon />, duration: 3000 },
+  },
+  error: { message: 'The cruiser got a flat tire!' },
+});
 ```
 
 ### Snack Options (Examples)
