@@ -9,7 +9,7 @@
  */
 
 import { motion, AnimatePresence } from 'framer-motion';
-import React, { createContext, useContext, useState, ReactNode, useCallback, MouseEventHandler } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useCallback, MouseEventHandler, useRef } from 'react';
 
 const DEFAULT_MAX_SNACKS = 6;
 const DEFAULT_DURATION = 6000;
@@ -31,7 +31,7 @@ interface Snack {
   id: string;
   message: string;
   type?: SnackType;
-  duration?: number;
+  duration: number;
   description?: string;
   icon?: ReactNode;
   dismissable?: boolean;
@@ -46,6 +46,12 @@ interface SnackOptions {
   action?: { label: string, onClick: MouseEventHandler<HTMLButtonElement> };
 }
 
+interface PromiseSnackOptions {
+  loading: { message: string, type?: SnackType, options?: SnackOptions },
+  success: { message: string, type?: SnackType, options?: SnackOptions },
+  error?: { message?: string, type?: SnackType, options?: SnackOptions },
+};
+
 interface SnackbarContextType {
   snackbar: {
     (_message: string, _options?: SnackOptions): void;
@@ -53,6 +59,7 @@ interface SnackbarContextType {
     success: (_message: string, _options?: SnackOptions) => void;
     warning: (_message: string, _options?: SnackOptions) => void;
     error: (_message: string, _options?: SnackOptions) => void;
+    promise: (_promise: Promise<unknown>, _options: PromiseSnackOptions) => void;
     clear: () => void;
   };
 }
@@ -67,23 +74,32 @@ interface SnackbarProviderProps {
 
 export const SnackbarProvider = ({ children, maxSnacks = DEFAULT_MAX_SNACKS, position = 'bottom-right' }: SnackbarProviderProps) => {
   const [snacks, setSnacks] = useState<Snack[]>([]);
+  const timeoutsRef = useRef<Record<string, NodeJS.Timeout | null>>({});
+
+  const resetTimeout = useCallback((id: string, duration: number) => {
+    if (timeoutsRef.current[id]) {
+      clearTimeout(timeoutsRef.current[id]!);
+    }
+
+    timeoutsRef.current[id] = setTimeout(() => {
+      setSnacks((prev) => prev.filter((snack) => snack.id !== id));
+      delete timeoutsRef.current[id];
+    }, duration);
+  }, []);
 
   const createSnack = useCallback(
     (message: string, type: Snack['type'] = 'default', options: SnackOptions = {}) => {
       const { duration = DEFAULT_DURATION, icon = null, description, dismissable = false, action } = options;
+      const positionIsTop = position.startsWith('top');
       const id = crypto.randomUUID();
 
-      const positionIsTop = position.startsWith('top');
+      const newSnack = { id, message, type, duration, description, icon: icon ?? getIcon(type), dismissable, action };
 
-      setSnacks((prev) => {
-        const newSnack = { id, message, type, duration, description, icon: icon ?? getIcon(type), dismissable, action };
-        return positionIsTop ? [...prev, newSnack] : [newSnack, ...prev];
-      });
+      setSnacks((prev) => positionIsTop ? [...prev, newSnack] : [newSnack, ...prev]);
+      resetTimeout(id, duration);
 
-      setTimeout(() => {
-        setSnacks((prev) => prev.filter((snack) => snack.id !== id));
-      }, duration);
-    }, [position]);
+      return newSnack;
+    }, [position, resetTimeout]);
 
   const snackbar = Object.assign(
     (message: string, options?: SnackOptions) => createSnack(message, 'default', options),
@@ -92,6 +108,20 @@ export const SnackbarProvider = ({ children, maxSnacks = DEFAULT_MAX_SNACKS, pos
       success: (message: string, options?: SnackOptions) => createSnack(message, 'success', options),
       warning: (message: string, options?: SnackOptions) => createSnack(message, 'warning', options),
       error: (message: string, options?: SnackOptions) => createSnack(message, 'error', options),
+      promise: async (promise: Promise<unknown>, options: PromiseSnackOptions) => {
+        const { loading, success, error } = options;
+        const { id } = createSnack(loading.message, loading.type ?? 'default', { icon: <Spinner />, ...loading.options, duration: 999999 });
+
+        promise.then(() => {
+          const type = success.type ?? 'success';
+          setSnacks((prev) => prev.map((snack) => snack.id === id ? { ...snack, message: success.message, type, icon: getIcon(type), duration: DEFAULT_DURATION, ...success.options } : snack ));
+          resetTimeout(id, success.options?.duration ?? DEFAULT_DURATION);
+        }).catch(() => {
+          const type = success.type ?? 'error';
+          setSnacks((prev) => prev.map((snack) => snack.id === id ? { ...snack, message: error?.message ?? 'Something went wrong. Please try again.', type, icon: getIcon(type), duration: DEFAULT_DURATION, ...error?.options } : snack ));
+          resetTimeout(id, error?.options?.duration ?? DEFAULT_DURATION);
+        });
+      },
       clear: () => setSnacks([]),
     },
   );
@@ -242,5 +272,11 @@ const XIcon = ({ className }: { className?: string }) => (
   <svg className={className} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <path d="M18 6 6 18"/>
     <path d="m6 6 12 12"/>
+  </svg>
+);
+
+const Spinner = () => (
+  <svg className="size-5 animate-spin p-0.5" width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M12,4a8,8,0,0,1,7.89,6.7A1.53,1.53,0,0,0,21.38,12h0a1.5,1.5,0,0,0,1.48-1.75,11,11,0,0,0-21.72,0A1.5,1.5,0,0,0,2.62,12h0a1.53,1.53,0,0,0,1.49-1.3A8,8,0,0,1,12,4Z"/>
   </svg>
 );
