@@ -50,17 +50,17 @@ interface PromiseSnackOptions {
   loading: { message: string, type?: SnackType, options?: SnackOptions },
   success: { message: string, type?: SnackType, options?: SnackOptions },
   error?: { message?: string, type?: SnackType, options?: SnackOptions },
-};
+}
 
 interface SnackbarContextType {
   snackbar: {
-    (_message: string, _options?: SnackOptions): void;
-    info: (_message: string, _options?: SnackOptions) => void;
-    success: (_message: string, _options?: SnackOptions) => void;
-    warning: (_message: string, _options?: SnackOptions) => void;
-    error: (_message: string, _options?: SnackOptions) => void;
+    (_message: string, _options?: SnackOptions): string;
+    info: (_message: string, _options?: SnackOptions) => string;
+    success: (_message: string, _options?: SnackOptions) => string;
+    warning: (_message: string, _options?: SnackOptions) => string;
+    error: (_message: string, _options?: SnackOptions) => string;
     promise: <T>(_promise: Promise<T>, _options: PromiseSnackOptions) => Promise<T>;
-    clear: () => void;
+    dismiss: (_ids?: string[]) => void;
   };
 }
 
@@ -98,7 +98,7 @@ export const SnackbarProvider = ({ children, maxSnacks = DEFAULT_MAX_SNACKS, pos
       setSnacks((prev) => positionIsTop ? [...prev, newSnack] : [newSnack, ...prev]);
       resetTimeout(id, duration);
 
-      return newSnack;
+      return id;
     }, [position, resetTimeout]);
 
   const snackbar = Object.assign(
@@ -110,7 +110,7 @@ export const SnackbarProvider = ({ children, maxSnacks = DEFAULT_MAX_SNACKS, pos
       error: (message: string, options?: SnackOptions) => createSnack(message, 'error', options),
       promise: async function <T>(promise: Promise<T>, options: PromiseSnackOptions): Promise<T> {
         const { loading, success, error } = options;
-        const { id } = createSnack(loading.message, loading.type ?? 'default', { icon: <Spinner />, ...loading.options, duration: 999999 });
+        const id = createSnack(loading.message, loading.type ?? 'default', { icon: <Spinner />, ...loading.options, duration: 999999 });
         try {
           const result = await promise;
           const type = success.type ?? 'success';
@@ -124,7 +124,9 @@ export const SnackbarProvider = ({ children, maxSnacks = DEFAULT_MAX_SNACKS, pos
           throw err;
         }
       },
-      clear: () => setSnacks([]),
+      dismiss: (ids?: string[]) => {
+        setSnacks((prev) => ids ? prev.filter((snack) => !ids.includes(snack.id)) : []);
+      },
     },
   );
 
