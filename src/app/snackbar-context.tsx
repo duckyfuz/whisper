@@ -59,7 +59,7 @@ interface SnackbarContextType {
     success: (_message: string, _options?: SnackOptions) => void;
     warning: (_message: string, _options?: SnackOptions) => void;
     error: (_message: string, _options?: SnackOptions) => void;
-    promise: (_promise: Promise<unknown>, _options: PromiseSnackOptions) => void;
+    promise: <T>(_promise: Promise<T>, _options: PromiseSnackOptions) => Promise<T>;
     clear: () => void;
   };
 }
@@ -108,19 +108,21 @@ export const SnackbarProvider = ({ children, maxSnacks = DEFAULT_MAX_SNACKS, pos
       success: (message: string, options?: SnackOptions) => createSnack(message, 'success', options),
       warning: (message: string, options?: SnackOptions) => createSnack(message, 'warning', options),
       error: (message: string, options?: SnackOptions) => createSnack(message, 'error', options),
-      promise: async (promise: Promise<unknown>, options: PromiseSnackOptions) => {
+      promise: async function <T>(promise: Promise<T>, options: PromiseSnackOptions): Promise<T> {
         const { loading, success, error } = options;
         const { id } = createSnack(loading.message, loading.type ?? 'default', { icon: <Spinner />, ...loading.options, duration: 999999 });
-
-        promise.then(() => {
+        try {
+          const result = await promise;
           const type = success.type ?? 'success';
           setSnacks((prev) => prev.map((snack) => snack.id === id ? { ...snack, message: success.message, type, icon: getIcon(type), duration: DEFAULT_DURATION, ...success.options } : snack ));
           resetTimeout(id, success.options?.duration ?? DEFAULT_DURATION);
-        }).catch(() => {
-          const type = success.type ?? 'error';
+          return result;
+        } catch (err) {
+          const type = error?.type ?? 'error';
           setSnacks((prev) => prev.map((snack) => snack.id === id ? { ...snack, message: error?.message ?? 'Something went wrong. Please try again.', type, icon: getIcon(type), duration: DEFAULT_DURATION, ...error?.options } : snack ));
           resetTimeout(id, error?.options?.duration ?? DEFAULT_DURATION);
-        });
+          throw err;
+        }
       },
       clear: () => setSnacks([]),
     },
