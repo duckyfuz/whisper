@@ -97,11 +97,22 @@ snackbar.promise(promise(), {
 }
 ```
 
-## 🔮 Contribution
+## 🛠️ Contributing
 
-If you wish to contribute to this project, clone the repo and run it locally using 
+📦 [Changelog](./CHANGELOG.md)
+
+Pull requests are welcome! If you're adding a feature or fixing a bug, please keep the following in mind:
+
+- Keep it simple: Favor readability and simplicity over cleverness or complexity.
+
+- Readable & customizable: Code should be easy for others to understand and extend - Whisper is designed to be minimal and developer-friendly.
+
+- Consistency matters: Follow existing patterns and conventions where possible.
+
+- Type safety & clarity: Use clear, expressive types and avoid unnecessary abstractions.
+
+If you're unsure about something, feel free to open an issue or draft PR to discuss — happy to collaborate!
 
 ```
 npm run dev
 ```
-
