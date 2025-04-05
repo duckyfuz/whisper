@@ -29,7 +29,7 @@ A lightweight and fully customizable React snackbar (toast) component built with
 
 - **Icon Support:** Built-in icons for different snack types and support for custom icons.
 
-- **Stackable Alerts:** Maintain a queue of snacks with a configurable max count (default: 6), and clear them all with a provided function.
+- **Stackable Alerts:** Maintain a queue of snacks with a configurable max count (default: 6), and dismiss them all with a provided function.
 
 - **WCAG Accessibility:** The default type styles adhere to WCAG AA guidelines.
 
@@ -71,7 +71,7 @@ snackbar.info("Your mission is to steal the Yaz Diamond");
 snackbar.success("You successfully snuck past security");
 snackbar.warning("You have 5m before the alarm is triggered");
 snackbar.error("Mission failed, you were spotted");
-snackbar.clear();
+snackbar.dismiss();
 
 const promise = () => new Promise((resolve) => setTimeout(() => resolve({ name: 'Whisper' }), 3000));
 
@@ -97,11 +97,22 @@ snackbar.promise(promise(), {
 }
 ```
 
-## 🔮 Contribution
+## 🛠️ Contributing
 
-If you wish to contribute to this project, clone the repo and run it locally using 
+📦 [Changelog](./CHANGELOG.md)
+
+Pull requests are welcome! If you're adding a feature or fixing a bug, please keep the following in mind:
+
+- Keep it simple: Favor readability and simplicity over cleverness or complexity.
+
+- Readable & customizable: Code should be easy for others to understand and extend - Whisper is designed to be minimal and developer-friendly.
+
+- Consistency matters: Follow existing patterns and conventions where possible.
+
+- Type safety & clarity: Use clear, expressive types and avoid unnecessary abstractions.
+
+If you're unsure about something, feel free to open an issue or draft PR to discuss — happy to collaborate!
 
 ```
 npm run dev
 ```
-

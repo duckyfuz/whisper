@@ -16,7 +16,7 @@ export const SnackbarControls = ({ onPositionChange }: { onPositionChange: (_pos
     { label: 'warning', code: `snackbar.warning("You have 5m before the alarm is triggered");`, onClick: () => snackbar.warning('You have 5m before the alarm is triggered') },
     { label: 'error', code: `snackbar.error("Mission failed, you were spotted");`, onClick: () => snackbar.error('Mission failed, you were spotted') },
     { label: 'promise', code: `const promise = () => new Promise((resolve) => setTimeout(() => resolve({ name: 'Whisper' }), 3000));\n\nsnackbar.promise(promise(), {\n\tloading: { message: 'On route to the police station...' },\n\tsuccess: {\n\t\tmessage: 'You have arrived at the police station',\n\t\toptions: { icon: <ShieldIcon />, duration: 3000 },\n\t},\n\terror: { message: 'The cruiser got a flat tire!' },\n});`, onClick: () => snackbar.promise(promise(), { loading: { message: 'On route to the police station...' }, success: { message: 'You have arrived at the police station', options: { icon: <ShieldIcon />, duration: 3000 } }, error: { message: 'The cruiser got a flat tire!' } }) },
-    { label: 'clear', code: `snackbar.clear();`, onClick: () => snackbar.clear() },
+    { label: 'dismiss', code: `snackbar.dismiss();`, onClick: () => snackbar.dismiss() },
   ];
 
   const options = [
@@ -33,7 +33,7 @@ export const SnackbarControls = ({ onPositionChange }: { onPositionChange: (_pos
 
   const handlePositionChange = useCallback((newPosition: Position) => {
     if (newPosition !== position) {
-      snackbar.clear();
+      snackbar.dismiss();
       setPosition(newPosition);
       onPositionChange(newPosition);
     }
