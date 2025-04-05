@@ -22,7 +22,7 @@ This project adheres to [Semantic Versioning](https://semver.org) and follows th
 
 ---
 
-## [0.1.0] - 2025-03-XX
+## [0.1.0] - 2025-02-01
 
 ### Added
 - Initial release of Whisper – a stackable, customizable snackbar (toast) component using TailwindCSS and Framer Motion.
